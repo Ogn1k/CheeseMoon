@@ -12,11 +12,15 @@ public class ThirdPersonCam : MonoBehaviour
 
     public float rotationSpeed;
 
+    bool flag = false;
+
     public Transform combatLookAt;
 
     public GameObject thirdPersonCam;
     public GameObject combatCam;
     public GameObject topDownCam;
+
+    public GameObject InventoryObj;
 
     public CameraStyle currentStyle;
     public enum CameraStyle
@@ -28,16 +32,47 @@ public class ThirdPersonCam : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        LockCursor(true);
+    }
+
+    public void LockCursor(bool _lock)
+    {
+        if(_lock)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    public void FlagThing()
+    {
+        flag = !flag;
     }
 
     private void Update()
     {
         // switch styles
+        if (Input.GetKeyDown(KeyCode.Escape)) flag = !flag;
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchCameraStyle(CameraStyle.Basic);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchCameraStyle(CameraStyle.Combat);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchCameraStyle(CameraStyle.Topdown);
+
+        if(flag)
+        { 
+            LockCursor(false); 
+            InventoryObj.SetActive(true); 
+            InventoryManager.Instance.InlistInventory(); 
+
+        } else 
+        { 
+            LockCursor(true); 
+            InventoryObj.SetActive(false); 
+        }
 
         // rotate orientation
         Vector3 viewDir = player.position - new Vector3(transform.position.x, player.position.y, transform.position.z);
