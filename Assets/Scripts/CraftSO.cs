@@ -10,7 +10,7 @@ public class CraftSO : ScriptableObject
 
     public List<PartOfCraft> craft;
 
-    public Item result;
+    public ItemSO result;
     public int amount;
 }
 
@@ -18,6 +18,6 @@ public class CraftSO : ScriptableObject
 [System.Serializable]
 public struct PartOfCraft
 {
-    [SerializeField] int amount;
-    [SerializeField] Item item;
+    [SerializeField] public int amount;
+    [SerializeField] public ItemSO item;
 }

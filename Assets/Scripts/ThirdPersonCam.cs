@@ -66,7 +66,7 @@ public class ThirdPersonCam : MonoBehaviour
         { 
             LockCursor(false); 
             InventoryObj.SetActive(true); 
-            InventoryManager.Instance.InlistInventory(); 
+            //InventoryManager.Instance.InlistInventory(); 
 
         } else 
         { 

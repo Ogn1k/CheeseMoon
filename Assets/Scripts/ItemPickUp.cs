@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class ItemPickUp : MonoBehaviour
 {
-    public Item item;
+    public ItemSO item;
 
     void Pickup()
     {
-        InventoryManager.Instance.Add(item);
+        InventoryManager.Instance.Add(item, 1);
         Destroy(gameObject);
     }
     private void OnTriggerEnter(Collider other)

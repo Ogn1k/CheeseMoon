@@ -22,35 +22,81 @@ public class InventoryManager : MonoBehaviour
 
     public void Awake()
     {
-        Instance = this; 
+        Instance = this;
+
+        
     }
 
-    public void Add(Item item)
+    private void Start()
     {
-        Items.Add(item);
-    }
+        foreach (var craft in craftList.craftList)
+        {
+            GameObject obj = Instantiate(craftItem, craftContent);
 
-    public void Remove(Item item) 
-    { 
-        Items.Remove(item);
-    }
-
-    private void ListItems()
-    {
-        foreach(Transform item in itemContent)
-            Destroy(item.gameObject);
-        foreach (var item in Items) 
-        { 
-            GameObject obj = Instantiate(InventoryItem, itemContent);
-            var itemName = obj.transform.GetComponentInChildren<TMP_Text>();
-            var itemIcon = obj.transform.GetComponentInChildren<Image>();
-
-            itemName.text = item.itemName;
-            itemIcon.sprite = item.itemIcon;
+            obj.GetComponent<CraftButton>().SetCraft(craft);
         }
     }
 
-    private void ListCrafts()
+    public void Add(ItemSO item, int amount)
+    {
+        
+
+        bool isInInv = false;
+        for(int i = 0; i<Items.Count;i++) 
+        {
+            if (Items[i].item == item) 
+            { 
+
+                isInInv = true;
+                Item temp = Items[i];
+                temp.amount++;
+                Items[i] = temp;
+                Items[i].itemObj.transform.Find("amount").GetComponent<TMP_Text>().text = temp.amount.ToString();
+            
+            }   
+        }
+
+        if(!isInInv) 
+        { 
+            
+
+
+            GameObject obj = Instantiate(InventoryItem, itemContent);
+            var itemName = obj.transform.GetComponentInChildren<TMP_Text>();
+            var itemAmount = obj.transform.Find("amount").GetComponent<TMP_Text>();
+            var itemIcon = obj.transform.GetComponentInChildren<Image>();
+
+            Items.Add(new Item { amount = amount, item = item, itemObj = obj });
+
+            itemName.text = item.itemName;
+            itemAmount.text = item.amount.ToString();
+            itemIcon.sprite = item.itemIcon;
+        }
+        
+    }
+
+    public void Remove(ItemSO _item, int amount) 
+    { 
+
+        for(int i=0; i<Items.Count;i++)
+        {
+            if (Items[i].item == _item)
+            {
+                if(Items[i].amount < amount)
+                { 
+                    print("error here");
+                    break;
+                }
+                Item temp = Items[i];
+                temp.amount = temp.amount - amount;
+                Items[i] = temp;
+                Items[i].itemObj.transform.Find("amount").GetComponent<TMP_Text>().text = temp.amount.ToString();
+            }
+        }
+        
+    }
+
+/*    private void ListCrafts()
     {
         foreach (Transform craft in craftContent)
             Destroy(craft.gameObject);
@@ -63,13 +109,12 @@ public class InventoryManager : MonoBehaviour
             craftName.text = craft.craftName;
             craftIcon.sprite = craft.craftIcon;
         }
-    }
+    }*/
 
-    public void InlistInventory()
+/*    public void InlistInventory()
     {
-        ListItems();
         ListCrafts();
-    }
+    }*/
 
     public void CraftButton()
     {
