@@ -54,7 +54,7 @@ public class ThirdPersonCam : MonoBehaviour
         flag = !flag;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         // switch styles
         if (Input.GetKeyDown(KeyCode.Escape)) flag = !flag;
