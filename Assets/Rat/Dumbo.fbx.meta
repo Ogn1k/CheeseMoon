@@ -3,7 +3,12 @@ guid: ecc642dd3cc3bb24c8eb072d759229b0
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: rat_Dumbo_Rat1
+    second: {fileID: 2100000, guid: 7d8a85fde4d8607409242370cd3c99fa, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
