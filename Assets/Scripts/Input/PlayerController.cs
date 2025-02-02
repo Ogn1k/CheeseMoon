@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 	#region Class vars
 	[SerializeField] private CharacterController _characterController;
 	[SerializeField] private Camera _playerCamera;
+	[SerializeField] private Transform _dummyCamera;
 
 	[Header("Base movement")]
 	public float runAcceleration = 35f;
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
 	public float movingThreshold = 0.01f;
 	public float gravity = 25f;
 	public float jumpSpeed = 1.0f;
+	public float turnSmoothTime = 0.1f;
 
 	[Header("Camera settings")]
 	public float lookSenseH = 0.1f;
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour
 	private Vector2 _playerTargetRotation = Vector2.zero;
 
 	private float _verticalVelocity = 0f;
+	private float turnSmoothVelocity;
 	#endregion
 
 	#region Startup
@@ -104,6 +107,8 @@ public class PlayerController : MonoBehaviour
 		newVelocity.y += _verticalVelocity;
 
 		_characterController.Move(newVelocity * Time.deltaTime);
+
+		
 	}
 	#endregion
 
@@ -114,9 +119,50 @@ public class PlayerController : MonoBehaviour
 		_cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
 
 		_playerTargetRotation.x += transform.eulerAngles.x + lookSenseH * _playerLocomotionInput.LookInput.x;
-		transform.rotation = Quaternion.Euler(0f, _playerTargetRotation.x, 0f);
+		//transform.rotation = Quaternion.Euler(0f, _playerTargetRotation.x, 0f);
 
-		_playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f); 
+		//_playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f); 
+
+		float rotationSpeed = 0.5f;
+		float horizontalInput = _playerLocomotionInput.MovementInput.x;
+		float verticalInput = _playerLocomotionInput.MovementInput.y;
+		Vector3 inputDir = transform.forward * verticalInput + transform.right * horizontalInput; //if you search for a camera problem - here it is :)
+
+		if (inputDir != Vector3.zero)
+			transform.forward = Vector3.Slerp(transform.forward, inputDir.normalized, Time.deltaTime * lookSenseH);
+
+		_dummyCamera.transform.rotation *= Quaternion.AngleAxis(_playerLocomotionInput.LookInput.x * lookSenseH, Vector3.up);
+
+		_dummyCamera.transform.rotation *= Quaternion.AngleAxis(_playerLocomotionInput.LookInput.y * lookSenseH, Vector3.right);
+
+		var angles = _dummyCamera.transform.localEulerAngles;
+		angles.z = 0;
+
+		var angle = _dummyCamera.transform.localEulerAngles.x;
+
+		//Clamp the Up/Down rotation
+		if (angle > 180 && angle < 340)
+		{
+			angles.x = 340;
+		}
+		else if (angle < 180 && angle > 40)
+		{
+			angles.x = 40;
+		}
+
+
+		_dummyCamera.transform.localEulerAngles = angles;
+
+		float targetAngle = Mathf.Atan2(_playerLocomotionInput.MovementInput.x, _playerLocomotionInput.MovementInput.y) * Mathf.Rad2Deg + _playerCamera.transform.rotation.eulerAngles.y;
+		float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+
+		//Set the player rotation based on the look transform
+		transform.rotation = Quaternion.Euler(0, smoothAngle, 0);
+			//Quaternion.Euler(0, _dummyCamera.transform.rotation.eulerAngles.y, 0);
+			//reset the y rotation of the look transform
+		_dummyCamera.transform.localEulerAngles = new Vector3(angles.x, 0, 0);
+
+		
 	}
 
 	private bool IsGrounded()
@@ -128,7 +174,7 @@ public class PlayerController : MonoBehaviour
 	#region State checks
 	private bool IsMovingLaterally()
 	{
-		 Vector3 lateralVelocity = new Vector3(_characterController.velocity.x, 0f, _characterController.velocity.y);
+		Vector3 lateralVelocity = new Vector3(_characterController.velocity.x, 0f, _characterController.velocity.z);
 
 		return lateralVelocity.magnitude > movingThreshold;
 	}
