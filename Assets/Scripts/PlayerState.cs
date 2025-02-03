@@ -11,6 +11,11 @@ public class PlayerState : MonoBehaviour
    
 	public bool InGroundedState()
 	{
+		return IsStateGroundedState(CurrentPlayerMovementState);
+	}
+
+	public bool IsStateGroundedState(PlayerMovementState movementState)
+	{
 		return CurrentPlayerMovementState == PlayerMovementState.Idling ||
 			CurrentPlayerMovementState == PlayerMovementState.Walking ||
 			CurrentPlayerMovementState == PlayerMovementState.Running ||
