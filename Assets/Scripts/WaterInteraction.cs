@@ -4,20 +4,43 @@ using UnityEngine;
 public class WaterInteraction : MonoBehaviour
 {
     [SerializeField] private string _playerTag = "Player";
-	public float bounce = 20;
+	public float bounce = 1;
+	public float _verticalVelocity = 0f;
+	public float gravity = 25f;
 
-	private void OnControllerColliderHit(ControllerColliderHit hit)
+	private void Update()
 	{
-		print(hit.gameObject);
-		if (hit.gameObject.tag == _playerTag)
-		{
-			hit.gameObject.GetComponent<CharacterController>().Move(bounce * Vector3.up * Time.deltaTime);
-
-		}
 		
 	}
-	private void OnCollisionEnter(Collision collision)
+
+	private void OnTriggerStay(Collider other)
 	{
-		print(collision.gameObject);
+		if (other.gameObject.tag == _playerTag)
+		{
+			//other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Liquid);
+			//other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Idling);
+			//_verticalVelocity += Mathf.Sqrt(bounce * 3 * gravity)* Time.deltaTime;
+			//print(_verticalVelocity);
+			//CharacterController playCon = other.gameObject.GetComponent<CharacterController>();
+
+			//playCon.Move(new Vector3(Mathf.Clamp(playCon.velocity.x, -0.5f, 0.5f), _verticalVelocity * Time.deltaTime, Mathf.Clamp(playCon.velocity.z, -0.5f, 0.5f)));
+			//playCon.Move(new Vector3(0f, _verticalVelocity * Time.deltaTime * Time.deltaTime, 0f));
+		}
+	}
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.gameObject.tag == _playerTag)
+		{
+			other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Liquid);
+			other.gameObject.GetComponent<PlayerController>().AutoJump();
+			_verticalVelocity = 0f;
+		}
+	}
+	private void OnTriggerExit(Collider other)
+	{
+		if (other.gameObject.tag == _playerTag)
+		{
+			other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Idling);
+		}
 	}
 }

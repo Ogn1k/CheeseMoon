@@ -19,7 +19,8 @@ public class PlayerState : MonoBehaviour
 		return CurrentPlayerMovementState == PlayerMovementState.Idling ||
 			CurrentPlayerMovementState == PlayerMovementState.Walking ||
 			CurrentPlayerMovementState == PlayerMovementState.Running ||
-			CurrentPlayerMovementState == PlayerMovementState.Sprinting;
+			CurrentPlayerMovementState == PlayerMovementState.Sprinting ||
+			CurrentPlayerMovementState == PlayerMovementState.Liquid;
 	}
 }
 
@@ -32,4 +33,5 @@ public enum PlayerMovementState
 	Jumping = 4,
 	Falling = 5,
 	Strafing = 6,
+	Liquid = 7,
 }

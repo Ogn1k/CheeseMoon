@@ -1,12 +1,16 @@
+using Cinemachine;
 using UnityEngine;
 
 public class InventorySwitch : MonoBehaviour
 {
-	bool flag = false;
-	public GameObject InventoryObj;
+	public bool flag = false;
+	public GameObject inventoryObj;
+	public CinemachineFreeLook camera;
+	Transform cameraFollow = null;
 
 	private void Start()
 	{
+		cameraFollow = camera.Follow;
 		LockCursor(true);
 	}
 
@@ -16,11 +20,20 @@ public class InventorySwitch : MonoBehaviour
 		{
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
+
+			
+			camera.Follow = cameraFollow;
+			camera.LookAt = cameraFollow;
 		}
 		else
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
+
+			
+			camera.Follow = null;
+			camera.LookAt = null;
+
 		}
 	}
 
@@ -36,12 +49,12 @@ public class InventorySwitch : MonoBehaviour
 		if (flag)
 		{
 			LockCursor(false);
-			InventoryObj.SetActive(true);
+			inventoryObj.SetActive(true);
 		}
 		else
 		{
 			LockCursor(true);
-			InventoryObj.SetActive(false);
+			inventoryObj.SetActive(false);
 		}
 	}
 }

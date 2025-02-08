@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 	public float gravity = 25f;
 	public float jumpSpeed = 1.0f;
 	public float turnSmoothTime = 0.1f;
+	public Vector3 velocity = Vector3.zero;
 
 	[Header("Camera settings")]
 	public float lookSenseH = 0.1f;
@@ -71,25 +72,30 @@ public class PlayerController : MonoBehaviour
 		bool isSprinting = _playerLocomotionInput.SprintToggledOn && isMovingLaterally;
 		bool isGrounded = IsGrounded();
 
-		PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Sprinting : 
+		PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Sprinting :
 			isMovingLaterally || isMovementInput ? PlayerMovementState.Running : PlayerMovementState.Idling;
-		_playerState.SetPlayerMovementState(lateralState);
 
-		if ((!isGrounded || _jumpedLastFrame) && _characterController.velocity.y >= 0f)
+		if (!(_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid))
 		{
-			_playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
-			_jumpedLastFrame = false;
-			_characterController.stepOffset = 0f;
-		}
-		else if ((!isGrounded || _jumpedLastFrame) && _characterController.velocity.y <= 0f) 
-		{
-			_playerState.SetPlayerMovementState(PlayerMovementState.Falling);
-			_jumpedLastFrame = false;
-			_characterController.stepOffset = 0f;
-		}
-		else
-			_characterController.stepOffset = _stepOffset;
 
+
+			_playerState.SetPlayerMovementState(lateralState);
+
+			if ((!isGrounded || _jumpedLastFrame) && _characterController.velocity.y >= 0f)
+			{
+				_playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
+				_jumpedLastFrame = false;
+				_characterController.stepOffset = 0f;
+			}
+			else if ((!isGrounded || _jumpedLastFrame) && _characterController.velocity.y <= 0f)
+			{
+				_playerState.SetPlayerMovementState(PlayerMovementState.Falling);
+				_jumpedLastFrame = false;
+				_characterController.stepOffset = 0f;
+			}
+			else
+				_characterController.stepOffset = _stepOffset;
+		}
 	}
 
 	private void HandleVerticalMovement()
@@ -101,16 +107,31 @@ public class PlayerController : MonoBehaviour
 		if (isGrounded && _verticalVelocity < 0)
 			_verticalVelocity = -_antiBump;
 
-		if(_playerLocomotionInput.JumpPressed && isGrounded)
+		if (_playerLocomotionInput.JumpPressed && isGrounded)
 		{
 			_verticalVelocity += Mathf.Sqrt(jumpSpeed * 3 * gravity);
 			_jumpedLastFrame = true;
 		}
 
+		/*if ((_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid) && !_jumpedLastFrame)
+		{
+			_verticalVelocity += Mathf.Sqrt(1 * 3 * gravity);
+			_jumpedLastFrame = true;
+		}*/
+
 		if(_playerState.IsStateGroundedState(_lastMovementState))
 		{
 			_verticalVelocity += _antiBump;
 		}
+	}
+
+	public void AutoJump()
+	{
+		//if ((_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid) && !_jumpedLastFrame)
+		//{
+			_verticalVelocity += Mathf.Sqrt(1 * 3 * gravity);
+			_jumpedLastFrame = true;
+		//}
 	}
 
 	private void HandleLateralMovement()
@@ -137,6 +158,9 @@ public class PlayerController : MonoBehaviour
 		newVelocity.y += _verticalVelocity;
 		newVelocity = !isGrounded ? HandleStepWalls(newVelocity) : newVelocity;
 
+
+		velocity = _characterController.velocity;
+
 		_characterController.Move(newVelocity * Time.deltaTime);
 
 		
@@ -159,6 +183,10 @@ public class PlayerController : MonoBehaviour
 	#region lateUpdate
 	private void LateUpdate()
 	{
+		if(transform.GetComponent<InventorySwitch>().flag)
+		{
+			return;
+		}
 		_cameraRotation.x += lookSenseH * _playerLocomotionInput.LookInput.x;
 		_cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
 
@@ -211,6 +239,8 @@ public class PlayerController : MonoBehaviour
 
 	private bool IsGrounded()
 	{
+		if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid)
+			return true;
 		bool grounded = _playerState.InGroundedState() ? IsGroundedWhileGrounded() : IsGroundedWhileAirborne();
 		return grounded;
 	}

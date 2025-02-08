@@ -11,6 +11,7 @@ public class PlayerLocomotionInput : MonoBehaviour, PlayerControls.IPlayerLocomo
     public Vector2 MovementInput { get; private set; }
 	public Vector2 LookInput { get; private set; }
 	public bool JumpPressed { get; private set; }
+	public bool IsWalking { get; private set; }
 
 	private void OnEnable()
 	{
