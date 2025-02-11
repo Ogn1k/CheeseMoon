@@ -17,7 +17,8 @@ public class WaterInteraction : MonoBehaviour
 	{
 		if (other.gameObject.tag == _playerTag)
 		{
-			//other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Liquid);
+			other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Liquid);
+			//other.gameObject.GetComponent<PlayerController>().AutoJump();
 			//other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Idling);
 			//_verticalVelocity += Mathf.Sqrt(bounce * 3 * gravity)* Time.deltaTime;
 			//print(_verticalVelocity);
@@ -31,8 +32,8 @@ public class WaterInteraction : MonoBehaviour
 	{
 		if (other.gameObject.tag == _playerTag)
 		{
-			other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Liquid);
-			other.gameObject.GetComponent<PlayerController>().AutoJump();
+			//other.gameObject.GetComponent<PlayerState>().SetPlayerMovementState(PlayerMovementState.Liquid);
+			
 			_verticalVelocity = 0f;
 		}
 	}

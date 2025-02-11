@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 [DefaultExecutionOrder(-1)]
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
 	public float gravity = 25f;
 	public float jumpSpeed = 1.0f;
 	public float turnSmoothTime = 0.1f;
+	public float rotationSpeed = 10f;
 	public Vector3 velocity = Vector3.zero;
 
 	[Header("Camera settings")]
@@ -60,7 +62,9 @@ public class PlayerController : MonoBehaviour
 	{
 		UpdateMovementState();
 		HandleVerticalMovement();
+		AutoJump();
 		HandleLateralMovement();
+		//AutoJump();
 	}
 
 	private void UpdateMovementState()
@@ -113,13 +117,20 @@ public class PlayerController : MonoBehaviour
 			_jumpedLastFrame = true;
 		}
 
-		/*if ((_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid) && !_jumpedLastFrame)
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position, Vector3.down, out hit, 1))
 		{
-			_verticalVelocity += Mathf.Sqrt(1 * 3 * gravity);
-			_jumpedLastFrame = true;
-		}*/
+			Debug.DrawLine(transform.position, hit.point, Color.cyan);
+			if (hit.collider.gameObject.layer == 4 && !_jumpedLastFrame)
+			{
+				isGrounded = true;
+				_verticalVelocity += 1;
+				_jumpedLastFrame = true;
+			}
+		}
+			
 
-		if(_playerState.IsStateGroundedState(_lastMovementState))
+		if (_playerState.IsStateGroundedState(_lastMovementState))
 		{
 			_verticalVelocity += _antiBump;
 		}
@@ -127,11 +138,7 @@ public class PlayerController : MonoBehaviour
 
 	public void AutoJump()
 	{
-		//if ((_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid) && !_jumpedLastFrame)
-		//{
-			_verticalVelocity += Mathf.Sqrt(1 * 3 * gravity);
-			_jumpedLastFrame = true;
-		//}
+		
 	}
 
 	private void HandleLateralMovement()
@@ -183,25 +190,18 @@ public class PlayerController : MonoBehaviour
 	#region lateUpdate
 	private void LateUpdate()
 	{
-		if(transform.GetComponent<InventorySwitch>().flag)
+		
+		if (transform.GetComponent<InventorySwitch>().flag)
 		{
 			return;
 		}
 		_cameraRotation.x += lookSenseH * _playerLocomotionInput.LookInput.x;
 		_cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
 
-		_playerTargetRotation.x += transform.eulerAngles.x + lookSenseH * _playerLocomotionInput.LookInput.x;
-		//transform.rotation = Quaternion.Euler(0f, _playerTargetRotation.x, 0f);
-
-		//_playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f); 
-
-		float rotationSpeed = 0.5f;
+		
 		float horizontalInput = _playerLocomotionInput.MovementInput.x;
 		float verticalInput = _playerLocomotionInput.MovementInput.y;
-		Vector3 inputDir = transform.forward * verticalInput + transform.right * horizontalInput; //if you search for a camera problem - here it is :)
-
-		if (inputDir != Vector3.zero)
-			transform.forward = Vector3.Slerp(transform.forward, inputDir.normalized, Time.deltaTime * lookSenseH);
+		//Vector3 inputDir = transform.forward * verticalInput + transform.right * horizontalInput; //if you search for a camera problem - here it is :)
 
 		_dummyCamera.transform.rotation *= Quaternion.AngleAxis(_playerLocomotionInput.LookInput.x * lookSenseH, Vector3.up);
 
@@ -222,19 +222,21 @@ public class PlayerController : MonoBehaviour
 			angles.x = 40;
 		}
 
-
 		_dummyCamera.transform.localEulerAngles = angles;
 
-		float targetAngle = Mathf.Atan2(_playerLocomotionInput.MovementInput.x, _playerLocomotionInput.MovementInput.y) * Mathf.Rad2Deg + _playerCamera.transform.rotation.eulerAngles.y;
-		float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+		Vector3 targetDirection = Vector3.zero;
+		targetDirection = _playerCamera.transform.forward * verticalInput;
+		targetDirection = targetDirection + _playerCamera.transform.right * horizontalInput;
+		targetDirection.Normalize();
+		targetDirection.y = 0;
 
-		//Set the player rotation based on the look transform
-		transform.rotation = Quaternion.Euler(0, smoothAngle, 0);
-			//Quaternion.Euler(0, _dummyCamera.transform.rotation.eulerAngles.y, 0);
-			//reset the y rotation of the look transform
-		_dummyCamera.transform.localEulerAngles = new Vector3(angles.x, 0, 0);
+		if(targetDirection == Vector3.zero)
+			targetDirection = transform.forward;
 
-		
+		Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+		Quaternion playerRotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+		transform.rotation = playerRotation;
 	}
 
 	private bool IsGrounded()
