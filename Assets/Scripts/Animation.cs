@@ -3,11 +3,14 @@ using UnityEngine;
 
 public class AnimationController : MonoBehaviour
 {
-    private bool animationRunning = false;
+    [SerializeField] private bool animationRunning = false;
+    [SerializeField] private KeyCode startAnimationKey = KeyCode.G;
+    [SerializeField] private KeyCode[] movementKeys = { KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D };
+    [SerializeField] private float animationDelay = 1.0f;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G) && !animationRunning)
+        if (Input.GetKeyDown(startAnimationKey) && !animationRunning)
         {
             StartAnimation();
         }
@@ -33,16 +36,20 @@ public class AnimationController : MonoBehaviour
 
     bool IsPlayerMoving()
     {
-        return Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
+        foreach (KeyCode key in movementKeys)
+        {
+            if (Input.GetKey(key))
+                return true;
+        }
+        return false;
     }
 
     IEnumerator PerformAnimation()
     {
         while (animationRunning)
         {
-            Debug.Log("Performing dance moves..."); // Заглушка для анимации
-
-            yield return new WaitForSeconds(1.0f); // Wait for 1 second
+            Debug.Log("Performing dance moves...");
+            yield return new WaitForSeconds(animationDelay);
         }
 
         Debug.Log("Dance animation finished!");
