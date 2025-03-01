@@ -25,7 +25,8 @@ Material:
   stringTagMap:
     IgnoreProjection: False
     RenderType: Opaque
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - SRPDEFAULTUNLIT
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -45,9 +46,9 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _1st_ShadeColor: {r: 0.5764706, g: 0.25783718, b: 0.19215687, a: 1}
-    - _2nd_ShadeColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.6509804, g: 0.15686272, b: 0.16180143, a: 1}
-    - _Color: {r: 0.6509804, g: 0.15686268, b: 0.1618014, a: 1}
+    - _1st_ShadeColor: {r: 0.4433962, g: 0.09865926, b: 0.027189402, a: 1}
+    - _2nd_ShadeColor: {r: 0.33962262, g: 0, b: 0, a: 1}
+    - _BaseColor: {r: 0.6320754, g: 0.068574235, b: 0.073046446, a: 1}
+    - _Color: {r: 0.6320754, g: 0.068574205, b: 0.07304644, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
