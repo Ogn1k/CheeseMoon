@@ -34,4 +34,5 @@ public enum PlayerMovementState
 	Falling = 5,
 	Strafing = 6,
 	Liquid = 7,
+	WallRun= 8,
 }

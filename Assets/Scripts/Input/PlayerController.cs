@@ -1,5 +1,6 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [DefaultExecutionOrder(-1)]
 public class PlayerController : MonoBehaviour
@@ -55,17 +56,28 @@ public class PlayerController : MonoBehaviour
 		_antiBump = sprintSpeed;
 		_stepOffset = _characterController.stepOffset;
 	}
+
 	#endregion
 
 	#region Update logic
+
+	private void FixedUpdate()
+	{
+		if ((_playerState.CurrentPlayerMovementState == PlayerMovementState.WallRun))
+		WallRunningMovement();
+	}
+
 	private void Update()
 	{
 		UpdateMovementState();
+		CheckForWall();
+		StateMachine();
 		HandleVerticalMovement();
-		AutoJump();
 		HandleLateralMovement();
 		//AutoJump();
 	}
+
+	
 
 	private void UpdateMovementState()
 	{
@@ -136,11 +148,6 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	public void AutoJump()
-	{
-		
-	}
-
 	private void HandleLateralMovement()
 	{
 		bool isSprinting = _playerState.CurrentPlayerMovementState == PlayerMovementState.Sprinting;
@@ -168,8 +175,11 @@ public class PlayerController : MonoBehaviour
 
 		velocity = _characterController.velocity;
 
-		_characterController.Move(newVelocity * Time.deltaTime);
-
+		//_characterController.Move(newVelocity * Time.deltaTime);
+		if (_playerState.CurrentPlayerMovementState == PlayerMovementState.WallRun)
+			_characterController.Move(newVelocity1 * Time.deltaTime);
+		else
+			_characterController.Move(newVelocity * Time.deltaTime);
 		
 	}
 
@@ -243,6 +253,8 @@ public class PlayerController : MonoBehaviour
 	{
 		if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Liquid)
 			return true;
+		if(_playerState.CurrentPlayerMovementState == PlayerMovementState.WallRun)
+			return true;
 		bool grounded = _playerState.InGroundedState() ? IsGroundedWhileGrounded() : IsGroundedWhileAirborne();
 		return grounded;
 	}
@@ -272,5 +284,111 @@ public class PlayerController : MonoBehaviour
 
 		return lateralVelocity.magnitude > movingThreshold;
 	}
+	#endregion
+
+	#region wallwalk
+
+	public LayerMask whatIsWall;
+	public LayerMask whatIsGround;
+	public float wallRunForce;
+	public float wallClimbSpeed;
+	public float maxWallRunTime;
+	private float wallRunTimer;
+
+
+	public float wallCheckDistance;
+	public float minJumpHeight;
+	private RaycastHit frontWallhit;
+	private bool wallFront;
+
+	public Transform orientation;
+	Vector3 newVelocity1;
+	bool flag = true;
+
+	private void CheckForWall()
+	{
+
+			//wallFront = Physics.Raycast(transform.position, orientation.forward, out frontWallhit, wallCheckDistance, whatIsWall);
+		wallFront = RotaryHeart.Lib.PhysicsExtension.Physics.CheckSphere(transform.position, 1.2f, whatIsWall, RotaryHeart.Lib.PhysicsExtension.PreviewCondition.Editor);
+		
+		//Debug.drawCap
+		Debug.DrawLine(transform.position, transform.position + (orientation.forward * wallCheckDistance));
+		print(_playerLocomotionInput.JumpPressed);
+	}
+
+	private void StateMachine()
+	{
+
+		if (wallFront)
+			if (!(_playerState.CurrentPlayerMovementState == PlayerMovementState.WallRun))
+				StartWallRun();
+		else
+			if ((_playerState.CurrentPlayerMovementState == PlayerMovementState.WallRun))
+				StopWallRun();
+
+	}
+
+	private void StartWallRun()
+	{
+		_playerState.SetPlayerMovementState(PlayerMovementState.WallRun);
+	}
+
+	private void WallRunningMovement()
+	{
+		//rb.useGravity = false;
+		//rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+		Vector3 wallNormal = frontWallhit.normal;
+
+		Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+		if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+			wallForward = -wallForward;
+
+		// forward force
+		
+
+		
+		//rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+		Vector3 cameraForwardXZ = new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
+		Vector3 cameraRightXZ = new Vector3(_playerCamera.transform.right.x, 0f, _playerCamera.transform.right.z).normalized;
+		Vector3 movementDirection = cameraRightXZ * _playerLocomotionInput.MovementInput.x;
+		Vector3 movementDelta = movementDirection * wallClimbSpeed ;
+		newVelocity1 = movementDelta;
+
+		if (Input.GetButtonDown("Jump"))
+		{
+			float x = wallNormal.x * 100;
+			float y = 100;
+			float z = wallNormal.z * 100;
+			Vector3 jumpfunc = new Vector3(
+				Mathf.Sqrt(x) + x + Time.deltaTime,
+				Mathf.Sqrt(y) + y + Time.deltaTime,
+				Mathf.Sqrt(z) + z + Time.deltaTime
+				);
+			newVelocity1 +=  jumpfunc * Time.deltaTime;
+
+
+		}
+			
+
+		// upwards/downwards force
+		if (_playerLocomotionInput.MovementInput.y > 0)
+			newVelocity1.y += wallClimbSpeed;
+		if (_playerLocomotionInput.MovementInput.y < 0)
+			newVelocity1.y -= wallClimbSpeed;
+
+
+		// push to wall force
+
+		//_characterController.Move(-wallNormal);
+			//Rigidbody.AddForce(-wallNormal * 100, ForceMode.Force);
+	}
+
+	private void StopWallRun()
+	{
+		_playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+	}
+
 	#endregion
 }
