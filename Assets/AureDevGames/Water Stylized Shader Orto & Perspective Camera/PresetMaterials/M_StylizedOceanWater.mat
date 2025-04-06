@@ -105,14 +105,14 @@ Material:
     - _FoamBlend: 0.09
     - _FresnelPower: 1
     - _GradientRefractionScale: 10
-    - _HorizonDistance: 78
+    - _HorizonDistance: 44
     - _IntersectionFoamBlend: 1.09
-    - _IntersectionFoamCutoff: 3.57
-    - _IntersectionFoamDepth: 2.43
-    - _IntersectionFoamDirection: 0.65
-    - _IntersectionFoamFade: 1.48
-    - _IntersectionFoamSpeed: 0.16
-    - _IntersectionFoamTiling: 1.27
+    - _IntersectionFoamCutoff: 1.31
+    - _IntersectionFoamDepth: 2.5
+    - _IntersectionFoamDirection: 1
+    - _IntersectionFoamFade: 2.33
+    - _IntersectionFoamSpeed: 0.03
+    - _IntersectionFoamTiling: 1.42
     - _LightingHardness: 0.39
     - _LightingSmoothness: 12.34
     - _NormalScale: 1.61
@@ -132,7 +132,7 @@ Material:
     - _RippleStrength: 83.62
     - _SecondaryFoamBlend: 0.06
     - _SkyboxForce: 2.5
-    - _Steps: 50
+    - _Steps: 56
     - _SurfaceFoamDirection: 0
     - _SurfaceFoamDistorsion: 0.38
     - _SurfaceFoamSpeed: 0
@@ -156,7 +156,7 @@ Material:
     - _FoamUVsOffset: {r: 1, g: 1, b: 0, a: 0}
     - _FresnelColor: {r: 2.670157, g: 2.670157, b: 2.670157, a: 0}
     - _HorizonColor: {r: 7.3772106, g: 3.6607668, b: 6.6577153, a: 1}
-    - _IntersectionFoamColor: {r: 1.1486984, g: 1.1486984, b: 1.1486984, a: 1}
+    - _IntersectionFoamColor: {r: 1.1486984, g: 1.1486984, b: 1.1486984, a: 0.23529412}
     - _PositionRipples: {r: 0, g: 0, b: 0, a: 0}
     - _SecondaryFoamColor: {r: 0, g: 0.002903101, b: 0.19245279, a: 0.40784314}
     - _ShallowColor: {r: 0, g: 0.13207549, b: 0.077801496, a: 1}
