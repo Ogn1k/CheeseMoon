@@ -23,8 +23,6 @@ public class InventoryManager : MonoBehaviour
     public void Awake()
     {
         Instance = this;
-
-        
     }
 
     private void Start()
@@ -39,8 +37,6 @@ public class InventoryManager : MonoBehaviour
 
     public void Add(ItemSO item, int amount)
     {
-        
-
         bool isInInv = false;
         for(int i = 0; i<Items.Count;i++) 
         {
@@ -58,9 +54,6 @@ public class InventoryManager : MonoBehaviour
 
         if(!isInInv) 
         { 
-            
-
-
             GameObject obj = Instantiate(InventoryItem, itemContent);
             var itemName = obj.transform.GetComponentInChildren<TMP_Text>();
             var itemAmount = obj.transform.Find("amount").GetComponent<TMP_Text>();

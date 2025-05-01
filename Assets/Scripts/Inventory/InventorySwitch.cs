@@ -5,12 +5,12 @@ public class InventorySwitch : MonoBehaviour
 {
 	public bool flag = false;
 	public GameObject inventoryObj;
-	public CinemachineFreeLook camera;
+	//public CinemachineFreeLook camera;
 	Transform cameraFollow = null;
 
 	private void Start()
 	{
-		cameraFollow = camera.Follow;
+		//cameraFollow = camera.Follow;
 		LockCursor(true);
 	}
 
@@ -22,8 +22,8 @@ public class InventorySwitch : MonoBehaviour
 			Cursor.visible = false;
 
 			
-			camera.Follow = cameraFollow;
-			camera.LookAt = cameraFollow;
+			//camera.Follow = cameraFollow;
+			//camera.LookAt = cameraFollow;
 		}
 		else
 		{
@@ -31,8 +31,8 @@ public class InventorySwitch : MonoBehaviour
 			Cursor.visible = true;
 
 			
-			camera.Follow = null;
-			camera.LookAt = null;
+			//camera.Follow = null;
+			//camera.LookAt = null;
 
 		}
 	}
