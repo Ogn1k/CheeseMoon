@@ -8,7 +8,7 @@ public class WaterBounce : MonoBehaviour
     public LayerMask GroundLayer;
     [Tooltip("Все остальное")]
     public float AutoJumpImpulse = 10f; // Сила импульса прыжка
-    public float JumpCooldown = 0.5f; // Время между прыжками
+    //public float JumpCooldown = 0.1f; // Время между прыжками
     public float TeleportSearchRadius = 20f;
 
     private KinematicCharacterMotor _motor;
@@ -22,39 +22,22 @@ public class WaterBounce : MonoBehaviour
 
     private void Update()
     {
-        /*print(_motor.GroundingStatus.GroundCollider.gameObject.layer);
+        //print(_motor.GroundingStatus.GroundCollider.gameObject.layer);
         // Если персонаж приземлён и имеет коллайдер (GroundCollider)
         if (_motor.GroundingStatus.IsStableOnGround && _motor.GroundingStatus.GroundCollider != null)
         {
             // Проверяем, что объект, на котором стоит игрок, относится к слою Water
             if (((1 << _motor.GroundingStatus.GroundCollider.gameObject.layer) & WaterLayer) != 0)
             {
-                _jumpTimer += Time.deltaTime;
-                if (_jumpTimer >= JumpCooldown)
-                {
-                    AutoJump();
-                    _jumpTimer = 0f;
-                }
+                AutoJump();
             }
             else
             {
                 // Если персонаж стоит не на воде, сбрасываем счетчик прыжков
                 _jumpCount = 0;
             }
-        }*/
+        }
     }
-
-	private void OnCollisionStay(Collision collision)
-	{
-		if (collision.gameObject.layer == WaterLayer)
-			AutoJump();
-	}
-
-	private void OnCollisionEnter(Collision collision)
-	{
-		if(collision.gameObject.layer == WaterLayer)
-			AutoJump();
-	}
 
 	private void AutoJump()
     {
@@ -102,7 +85,7 @@ public class WaterBounce : MonoBehaviour
         }
 
         // Телепортируем персонажа к найденной точке (с небольшим смещением вверх)
-        transform.position = closestPoint + _motor.CharacterUp * 0.5f;
+        _motor.SetTransientPosition( closestPoint + _motor.CharacterUp * 0.5f);
         Debug.Log("Телепортация на позицию: " + transform.position);
     }
 }
