@@ -75,7 +75,7 @@ public class WaterBounce : MonoBehaviour
         // Ищем ближайшую точку среди найденных коллайдеров
         foreach (Collider col in colliders)
         {
-            if (!col.gameObject.GetComponent<MeshCollider>().convex || !col.gameObject.GetComponent<BoxCollider>()) continue;
+            if (!col.gameObject.GetComponent<MeshCollider>().convex) continue;
             Vector3 point = col.ClosestPoint(currentPosition);
             float dist = Vector3.Distance(currentPosition, point);
             if (dist < closestDistance)
