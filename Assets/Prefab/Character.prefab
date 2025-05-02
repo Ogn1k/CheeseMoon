@@ -283,9 +283,10 @@ GameObject:
   - component: {fileID: 4766123815911934846}
   - component: {fileID: 2649485858642803742}
   - component: {fileID: 3923220264258144128}
+  - component: {fileID: 2292640785517491882}
   m_Layer: 0
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -363,6 +364,9 @@ MonoBehaviour:
   MeshRoot: {fileID: 6899618484552595515}
   CameraFollowPoint: {fileID: 3239228646631631232}
   CrouchedCapsuleHeight: 1
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &2649485858642803742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +436,26 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2292640785517491882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351841502436237189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c953bc9e7559c42afcb8bc64f43166, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WaterLayer:
+    serializedVersion: 2
+    m_Bits: 16
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  AutoJumpImpulse: 10
+  TeleportSearchRadius: 20
 --- !u!1001 &6217020518574329126
 PrefabInstance:
   m_ObjectHideFlags: 0

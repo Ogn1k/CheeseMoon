@@ -20,7 +20,7 @@ public class WaterBounce : MonoBehaviour
         _motor = GetComponent<KinematicCharacterMotor>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         //print(_motor.GroundingStatus.GroundCollider.gameObject.layer);
         // Если персонаж приземлён и имеет коллайдер (GroundCollider)
@@ -75,6 +75,7 @@ public class WaterBounce : MonoBehaviour
         // Ищем ближайшую точку среди найденных коллайдеров
         foreach (Collider col in colliders)
         {
+            if (!col.gameObject.GetComponent<MeshCollider>().convex) continue;
             Vector3 point = col.ClosestPoint(currentPosition);
             float dist = Vector3.Distance(currentPosition, point);
             if (dist < closestDistance)
@@ -85,7 +86,7 @@ public class WaterBounce : MonoBehaviour
         }
 
         // Телепортируем персонажа к найденной точке (с небольшим смещением вверх)
-        _motor.SetTransientPosition( closestPoint + _motor.CharacterUp * 0.5f);
+        _motor.SetPosition( closestPoint + _motor.CharacterUp * 0.5f);
         Debug.Log("Телепортация на позицию: " + transform.position);
     }
 }
