@@ -1852,7 +1852,7 @@ GameObject:
   - component: {fileID: 926416122}
   - component: {fileID: 926416121}
   - component: {fileID: 926416123}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Cylinder (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2189,7 +2189,7 @@ GameObject:
   m_Layer: 0
   m_Name: point
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -2449,7 +2449,7 @@ GameObject:
   - component: {fileID: 1508848398}
   - component: {fileID: 1508848397}
   - component: {fileID: 1508848396}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2626,7 +2626,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525768144}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2899,7 +2899,7 @@ GameObject:
   - component: {fileID: 1557168290}
   - component: {fileID: 1557168289}
   - component: {fileID: 1557168288}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3124,7 +3124,7 @@ GameObject:
   - component: {fileID: 1659117433}
   - component: {fileID: 1659117432}
   - component: {fileID: 1659117431}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
